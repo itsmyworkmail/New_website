@@ -7,6 +7,7 @@ import { useTheme } from "next-themes"
 import Image from 'next/image'
 import Tooltip from '@/components/ui/Tooltip'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Header({ user }: { user?: any }) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const { theme, setTheme } = useTheme()

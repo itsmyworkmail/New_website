@@ -6,7 +6,8 @@ import Header from '@/components/Header'
 import TaskModal from '@/components/TaskModal'
 import TaskCard from '@/components/TaskCard'
 
-export default function Dashboard({ tasks, user }: { tasks: any[], user: any }) {
+export default function Dashboard({ tasks, user }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { tasks: any[], user: any }) {
     const [showTaskModal, setShowTaskModal] = useState(false)
     const [filter, setFilter] = useState<'all' | 'starred' | 'completed'>('all')
 
