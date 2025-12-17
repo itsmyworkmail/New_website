@@ -1,26 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import TaskModal from '@/components/TaskModal'
 import TaskCard from '@/components/TaskCard'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 
-export default function Dashboard({ tasks, user }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { tasks: any[], user: any }) {
+export default function Dashboard() {
+    const [tasks, setTasks] = useState<any[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [user, setUser] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
     const [showTaskModal, setShowTaskModal] = useState(false)
     const [filter, setFilter] = useState<'all' | 'starred' | 'completed'>('all')
+    const supabase = createClient()
+    const router = useRouter()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError || !user) {
+                router.push('/login')
+                return
+            }
+            setUser(user)
+
+            const { data: tasksData, error: tasksError } = await supabase
+                .from('tasks')
+                .select('*')
+                .order('created_at', { ascending: false })
+
+            if (tasksData) {
+                setTasks(tasksData)
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [router, supabase])
 
     const filteredTasks = tasks.filter(task => {
         if (filter === 'completed') return task.is_completed
-        // For 'all' and 'starred', we generally want to hide completed tasks
-        // unless the user specifically asks for 'completed' view.
-        // Assuming 'is_completed' field exists. If not present in DB yet, this checks undefined which is falsy (safe).
         if (task.is_completed) return false
-
         if (filter === 'starred') return task.is_starred
         return true
     })
+
+    if (loading) {
+        return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>
+    }
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
@@ -58,7 +87,12 @@ export default function Dashboard({ tasks, user }: // eslint-disable-next-line @
 
                 <TaskModal
                     isOpen={showTaskModal}
-                    onClose={() => setShowTaskModal(false)}
+                    onClose={() => {
+                        setShowTaskModal(false)
+                        // Refresh tasks after modal close (simple way)
+                        // A better way would be to pass a callback to refresh or use context
+                        window.location.reload()
+                    }}
                 />
             </main>
         </div>

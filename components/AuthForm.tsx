@@ -1,28 +1,69 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { login, signup, signInWithGoogle } from '@/app/login/actions'
 import { Chrome } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 
 export default function AuthForm() {
     const [isLogin, setIsLogin] = useState(true)
     const [isPending, startTransition] = useTransition()
     const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const supabase = createClient()
+    const router = useRouter()
 
     async function handleSubmit(formData: FormData) {
         setMessage(null)
         setError(null)
         startTransition(async () => {
+            const email = formData.get('email') as string
+            const password = formData.get('password') as string
+            const full_name = formData.get('full_name') as string
+
             if (isLogin) {
-                const res = await login(formData)
-                if (res?.error) setError(res.error)
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                })
+                if (error) {
+                    setError(error.message)
+                } else {
+                    router.push('/')
+                    router.refresh()
+                }
             } else {
-                const res = await signup(formData)
-                if (res?.error) setError(res.error)
-                if (res?.success) setMessage(res.message!)
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name,
+                        }
+                    }
+                })
+                if (error) {
+                    setError(error.message)
+                } else if (data.user && !data.session) {
+                    setMessage('Check your email to continue sign in process')
+                } else {
+                    router.push('/')
+                    router.refresh()
+                }
             }
         })
+    }
+
+    async function handleGoogleLogin() {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${location.origin}/auth/callback`,
+            },
+        })
+        if (error) {
+            setError(error.message)
+        }
     }
 
     return (
@@ -101,7 +142,7 @@ export default function AuthForm() {
             </div>
 
             <button
-                onClick={() => signInWithGoogle()}
+                onClick={handleGoogleLogin}
                 className="mt-6 w-full bg-white text-gray-900 font-semibold py-3 px-4 rounded-full flex items-center justify-center space-x-2 hover:bg-gray-100 transition-colors shadow-lg"
             >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -140,3 +181,4 @@ export default function AuthForm() {
         </div >
     )
 }
+

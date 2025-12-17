@@ -1,18 +1,44 @@
 'use client'
 
 import { X, Clock, AlignLeft, List } from 'lucide-react'
-import { createTask } from '@/app/actions/tasks'
+import { createClient } from '@/utils/supabase/client'
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const [isPending, startTransition] = useTransition()
+    const supabase = createClient()
+    const router = useRouter()
 
     if (!isOpen) return null
 
     async function handleSubmit(formData: FormData) {
         startTransition(async () => {
-            await createTask(formData)
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) return
+
+            const title = formData.get('title') as string
+            const description = formData.get('description') as string
+            const date = formData.get('date') as string
+            const time = formData.get('time') as string
+            const isAllDay = formData.get('isAllDay') === 'on'
+            const recurrence = formData.get('recurrence') as string
+            const listType = formData.get('listType') as string
+
+            await supabase.from('tasks').insert({
+                title,
+                description,
+                due_date: date || null,
+                due_time: time || null,
+                is_all_day: isAllDay,
+                recurrence,
+                list_type: listType,
+                user_id: user.id,
+                is_starred: false
+            })
+
             onClose()
+            router.refresh()
         })
     }
 

@@ -1,11 +1,11 @@
 'use client'
 
 import { Moon, Sun, Bell, Settings, User, LogOut } from 'lucide-react'
-import { signOut } from '@/app/login/actions'
 import { useState, useEffect } from 'react'
 import { useTheme } from "next-themes"
 import Image from 'next/image'
 import Tooltip from '@/components/ui/Tooltip'
+import { createClient } from '@/utils/supabase/client'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Header({ user }: { user?: any }) {
@@ -72,15 +72,16 @@ export default function Header({ user }: { user?: any }) {
                             <div className="px-4 py-2 text-xs font-semibold text-muted-foreground border-b border-border/50 mb-1 uppercase tracking-wider">
                                 Settings
                             </div>
-                            <form action={signOut}>
-                                <button
-                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 flex items-center gap-2 transition-colors"
-                                    type="submit"
-                                >
-                                    <LogOut size={16} />
-                                    Sign out
-                                </button>
-                            </form>
+                            <button
+                                onClick={async () => {
+                                    await createClient().auth.signOut()
+                                    window.location.href = '/login'
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 flex items-center gap-2 transition-colors"
+                            >
+                                <LogOut size={16} />
+                                Sign out
+                            </button>
                         </div>
                     )}
                 </div>

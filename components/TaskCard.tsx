@@ -1,8 +1,9 @@
 'use client'
 
 import { Star, Trash2, Calendar, Check } from 'lucide-react'
-import { toggleTaskStar, deleteTask, toggleTaskCompletion } from '@/app/actions/tasks'
+import { createClient } from '@/utils/supabase/client'
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface Task {
     id: string
@@ -20,27 +21,41 @@ interface TaskProps {
 
 export default function TaskCard({ task }: TaskProps) {
     const [isPending, startTransition] = useTransition()
+    const supabase = createClient()
+    const router = useRouter()
 
     const handleStar = (e: React.MouseEvent) => {
         e.stopPropagation()
-        startTransition(() => {
-            toggleTaskStar(task.id, task.is_starred)
+        startTransition(async () => {
+            await supabase
+                .from('tasks')
+                .update({ is_starred: !task.is_starred })
+                .eq('id', task.id)
+            router.refresh()
         })
     }
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation()
         if (confirm('Are you sure you want to delete this task?')) {
-            startTransition(() => {
-                deleteTask(task.id)
+            startTransition(async () => {
+                await supabase
+                    .from('tasks')
+                    .delete()
+                    .eq('id', task.id)
+                router.refresh()
             })
         }
     }
 
     const handleToggleComplete = () => {
         // Optimistic UI could be improved here, but useTransition handles the loading state
-        startTransition(() => {
-            toggleTaskCompletion(task.id, !task.is_completed)
+        startTransition(async () => {
+            await supabase
+                .from('tasks')
+                .update({ is_completed: !task.is_completed })
+                .eq('id', task.id)
+            router.refresh()
         })
     }
 
