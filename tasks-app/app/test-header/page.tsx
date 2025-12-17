@@ -13,7 +13,7 @@ export default function TestHeader() {
         }
     }
 
-    const [filter, setFilter] = useState<'all' | 'starred'>('all')
+    const [filter, setFilter] = useState<'all' | 'starred' | 'completed'>('all')
 
     return (
         <div className="flex bg-background h-screen">

@@ -13,6 +13,7 @@ export default function Header({ user }: { user?: any }) {
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
+        // eslint-disable-next-line
         setMounted(true)
     }, [])
 

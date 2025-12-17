@@ -1,8 +1,8 @@
 'use client'
 
-import { X, Clock, AlignLeft, List, Calendar } from 'lucide-react'
+import { X, Clock, AlignLeft, List } from 'lucide-react'
 import { createTask } from '@/app/actions/tasks'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 
 export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const [isPending, startTransition] = useTransition()

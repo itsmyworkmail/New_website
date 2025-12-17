@@ -1,11 +1,21 @@
 'use client'
 
-import { Star, Trash2, Calendar, Clock, Check } from 'lucide-react'
+import { Star, Trash2, Calendar, Check } from 'lucide-react'
 import { toggleTaskStar, deleteTask, toggleTaskCompletion } from '@/app/actions/tasks'
 import { useTransition } from 'react'
 
+interface Task {
+    id: string
+    title: string
+    description?: string | null
+    is_starred: boolean
+    is_completed: boolean
+    due_date?: string | null
+    list_type?: string
+}
+
 interface TaskProps {
-    task: any
+    task: Task
 }
 
 export default function TaskCard({ task }: TaskProps) {

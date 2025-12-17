@@ -43,7 +43,7 @@ export async function toggleTaskStar(taskId: string, isStarred: boolean) {
         .eq('id', taskId)
 
     if (error) return { error: error.message }
-    if (error) return { error: error.message }
+
     revalidatePath('/')
 }
 
