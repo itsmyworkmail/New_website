@@ -43,4 +43,17 @@ For the application to function correctly, you **MUST** configure the following 
 
 > **Note:** If these variables are invalid or missing, authentication features will fail.
 
+### Troubleshooting Google Sign-in
+
+If Google Sign-in fails with a 404 or error, check the following:
+
+1.  **Supabase Redirect URLs**:
+    - Go to your Supabase Dashboard -> Authentication -> URL Configuration.
+    - Add your Vercel Deployment URL to **Redirect URLs**.
+    - Example: `https://your-project-name.vercel.app/**` (Wildcard is recommended for test deployments) or exactly `https://your-project-name.vercel.app/auth/callback`.
+
+2.  **Vercel Environment Variables**:
+    - Ensure `NEXT_PUBLIC_SITE_URL` is set to your Vercel URL (e.g., `https://your-project-name.vercel.app`) in Vercel Project Settings.
+    - **Re-deploy** your project after changing environment variables for them to take effect.
+
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
