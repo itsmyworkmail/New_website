@@ -24,28 +24,26 @@
   --glass-border: rgba(255, 255, 255, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark Mode Colors - Matching screenshots */
-    --background: #0F0F12;
-    /* Very dark mostly black */
-    --foreground: #ededed;
+.dark {
+  /* Dark Mode Colors - Matching screenshots */
+  --background: #0F0F12;
+  /* Very dark mostly black */
+  --foreground: #ededed;
 
-    --primary: #7B68EE;
-    --primary-foreground: #ffffff;
+  --primary: #7B68EE;
+  --primary-foreground: #ffffff;
 
-    --card: #1E1E24;
-    --card-foreground: #ededed;
+  --card: #1E1E24;
+  --card-foreground: #ededed;
 
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
 
-    --border: #333333;
+  --border: #333333;
 
-    /* Glassmorphism Dark */
-    --glass-bg: rgba(30, 30, 36, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
-  }
+  /* Glassmorphism Dark */
+  --glass-bg: rgba(30, 30, 36, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
