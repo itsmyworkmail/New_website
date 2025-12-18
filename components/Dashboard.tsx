@@ -48,6 +48,14 @@ export default function Dashboard() {
         return true
     })
 
+    const handleUpdateTask = (updatedTask: any) => {
+        setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t))
+    }
+
+    const handleDeleteTask = (taskId: string) => {
+        setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId))
+    }
+
     if (loading) {
         return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>
     }
@@ -73,7 +81,12 @@ export default function Dashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filteredTasks.length > 0 ? (
                             filteredTasks.map(task => (
-                                <TaskCard key={task.id} task={task} />
+                                <TaskCard
+                                    key={task.id}
+                                    task={task}
+                                    onUpdateTask={handleUpdateTask}
+                                    onDeleteTask={handleDeleteTask}
+                                />
                             ))
                         ) : (
                             <div className="col-span-full py-20 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-muted-foreground bg-white/5">

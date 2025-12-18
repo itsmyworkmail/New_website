@@ -17,19 +17,26 @@ interface Task {
 
 interface TaskProps {
     task: Task
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onUpdateTask?: (task: any) => void
+    onDeleteTask?: (taskId: string) => void
 }
 
-export default function TaskCard({ task }: TaskProps) {
+export default function TaskCard({ task, onUpdateTask, onDeleteTask }: TaskProps) {
     const [isPending, startTransition] = useTransition()
     const supabase = createClient()
     const router = useRouter()
 
     const handleStar = (e: React.MouseEvent) => {
         e.stopPropagation()
+        // Optimistic update
+        const updatedTask = { ...task, is_starred: !task.is_starred }
+        onUpdateTask?.(updatedTask)
+
         startTransition(async () => {
             await supabase
                 .from('tasks')
-                .update({ is_starred: !task.is_starred })
+                .update({ is_starred: updatedTask.is_starred })
                 .eq('id', task.id)
             router.refresh()
         })
@@ -38,6 +45,9 @@ export default function TaskCard({ task }: TaskProps) {
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation()
         if (confirm('Are you sure you want to delete this task?')) {
+            // Optimistic update
+            onDeleteTask?.(task.id)
+
             startTransition(async () => {
                 await supabase
                     .from('tasks')
@@ -49,11 +59,14 @@ export default function TaskCard({ task }: TaskProps) {
     }
 
     const handleToggleComplete = () => {
-        // Optimistic UI could be improved here, but useTransition handles the loading state
+        // Optimistic update
+        const updatedTask = { ...task, is_completed: !task.is_completed }
+        onUpdateTask?.(updatedTask)
+
         startTransition(async () => {
             await supabase
                 .from('tasks')
-                .update({ is_completed: !task.is_completed })
+                .update({ is_completed: updatedTask.is_completed })
                 .eq('id', task.id)
             router.refresh()
         })
