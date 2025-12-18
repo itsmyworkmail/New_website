@@ -56,6 +56,14 @@ export default function Dashboard() {
         setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId))
     }
 
+    const handleAddTask = (newTask: any) => {
+        setTasks(prevTasks => [newTask, ...prevTasks])
+    }
+
+    const handleReplaceTask = (tempId: string, realTask: any) => {
+        setTasks(prevTasks => prevTasks.map(t => t.id === tempId ? realTask : t))
+    }
+
     if (loading) {
         return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>
     }
@@ -100,10 +108,10 @@ export default function Dashboard() {
                     isOpen={showTaskModal}
                     onClose={() => {
                         setShowTaskModal(false)
-                        // Refresh tasks after modal close (simple way)
-                        // A better way would be to pass a callback to refresh or use context
-                        window.location.reload()
+                        // Removed reload as handled optimistically now
                     }}
+                    onAddTask={handleAddTask}
+                    onReplaceTask={handleReplaceTask}
                 />
             </main>
         </div>

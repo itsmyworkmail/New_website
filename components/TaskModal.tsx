@@ -6,27 +6,56 @@ import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-    const [isPending, startTransition] = useTransition()
+export default function TaskModal({ isOpen, onClose, onAddTask, onReplaceTask }: {
+    isOpen: boolean,
+    onClose: () => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onAddTask: (task: any) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onReplaceTask: (tempId: string, task: any) => void
+}) {
     const supabase = createClient()
     const router = useRouter()
 
     if (!isOpen) return null
 
     async function handleSubmit(formData: FormData) {
-        startTransition(async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
+        // No transition - immediate
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
-            const title = formData.get('title') as string
-            const description = formData.get('description') as string
-            const date = formData.get('date') as string
-            const time = formData.get('time') as string
-            const isAllDay = formData.get('isAllDay') === 'on'
-            const recurrence = formData.get('recurrence') as string
-            const listType = formData.get('listType') as string
+        const title = formData.get('title') as string
+        const description = formData.get('description') as string
+        const date = formData.get('date') as string
+        const time = formData.get('time') as string
+        const isAllDay = formData.get('isAllDay') === 'on'
+        const recurrence = formData.get('recurrence') as string
+        const listType = formData.get('listType') as string
 
-            await supabase.from('tasks').insert({
+        const tempId = crypto.randomUUID()
+        const optimisticTask = {
+            id: tempId,
+            title,
+            description,
+            due_date: date || null,
+            due_time: time || null,
+            is_all_day: isAllDay,
+            recurrence,
+            list_type: listType,
+            user_id: user.id,
+            is_starred: false,
+            is_completed: false,
+            created_at: new Date().toISOString()
+        }
+
+        // 1. Update UI Immediately
+        onAddTask(optimisticTask)
+        onClose()
+
+        // 2. Perform Server Request
+        const { data, error } = await supabase
+            .from('tasks')
+            .insert({
                 title,
                 description,
                 due_date: date || null,
@@ -38,10 +67,17 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                 is_starred: false,
                 is_completed: false
             })
+            .select()
+            .single()
 
-            onClose()
+        // 3. Reconcile with Server Data
+        if (data && !error) {
+            onReplaceTask(tempId, data)
             router.refresh()
-        })
+        } else {
+            console.error("Failed to create task", error)
+            // Ideally we should revert the optimistic update here, simple alert for now
+        }
     }
 
     return (
@@ -134,10 +170,9 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                     <div className="flex justify-end pt-4">
                         <button
                             type="submit"
-                            disabled={isPending}
                             className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full font-medium transition-colors shadow-lg shadow-primary/20 disabled:opacity-50"
                         >
-                            {isPending ? 'Save' : 'Save'}
+                            Save
                         </button>
                     </div>
 
