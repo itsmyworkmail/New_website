@@ -1,10 +1,11 @@
 'use client'
 
-import { X, Clock, AlignLeft, List } from 'lucide-react'
+import { X, Clock, AlignLeft, List, Calendar, Repeat } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
     const [isPending, startTransition] = useTransition()
     const supabase = createClient()
@@ -34,7 +35,8 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                 recurrence,
                 list_type: listType,
                 user_id: user.id,
-                is_starred: false
+                is_starred: false,
+                is_completed: false
             })
 
             onClose()
@@ -135,7 +137,7 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                             disabled={isPending}
                             className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full font-medium transition-colors shadow-lg shadow-primary/20 disabled:opacity-50"
                         >
-                            {isPending ? 'Saving...' : 'Save'}
+                            {isPending ? 'Save' : 'Save'}
                         </button>
                     </div>
 
