@@ -9,6 +9,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function Dashboard() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [tasks, setTasks] = useState<any[]>([])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [user, setUser] = useState<any>(null)
@@ -27,7 +28,7 @@ export default function Dashboard() {
             }
             setUser(user)
 
-            const { data: tasksData, error: tasksError } = await supabase
+            const { data: tasksData } = await supabase
                 .from('tasks')
                 .select('*')
                 .order('created_at', { ascending: false })
