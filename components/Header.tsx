@@ -3,12 +3,11 @@
 import { Moon, Sun, Bell, Settings, User, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTheme } from "next-themes"
-import Image from 'next/image'
 import Tooltip from '@/components/ui/Tooltip'
 import { createClient } from '@/utils/supabase/client'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Header({ user }: { user?: any }) {
+export default function Header({ user, filter }: { user?: any, filter: string }) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
     const { theme, setTheme } = useTheme()
     const [mounted, setMounted] = useState(false)
@@ -22,28 +21,12 @@ export default function Header({ user }: { user?: any }) {
         setTheme(theme === 'dark' ? 'light' : 'dark')
     }
 
-    // Default or user settings
-    const avatarUrl = user?.user_metadata?.avatar_url
-    const displayName = user?.user_metadata?.full_name || user?.email || 'User Name'
+    const title = filter === 'all' ? 'My Tasks' : filter === 'starred' ? 'Starred Tasks' : 'Completed Tasks'
 
     return (
-        <header className="h-20 w-full flex items-center justify-between px-8 border-b border-border/50 bg-background/50 backdrop-blur-md sticky top-0 z-20">
+        <header className="h-16 w-full flex items-center justify-between px-6 bg-transparent sticky top-0 z-20">
             <div className="flex items-center gap-4">
-                {avatarUrl ? (
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border">
-                        <Image
-                            src={avatarUrl}
-                            alt={displayName}
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
-                ) : (
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
-                        <User size={20} />
-                    </div>
-                )}
-                <span className="font-semibold text-lg tracking-tight">{displayName}</span>
+                <h1 className="text-2xl font-bold capitalize tracking-tight text-foreground">{title}</h1>
             </div>
 
             <div className="flex items-center gap-3">

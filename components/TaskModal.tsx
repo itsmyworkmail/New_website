@@ -44,7 +44,7 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#1E1E24] w-full max-w-lg rounded-2xl shadow-2xl border border-white/10 relative overflow-hidden">
+            <div className="bg-[#1B1B1B] w-full max-w-md rounded-2xl shadow-2xl border border-white/10 relative overflow-hidden">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -63,7 +63,7 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                             placeholder="Add title"
                             required
                             autoFocus
-                            className="w-full bg-transparent text-2xl font-semibold placeholder:text-gray-500 text-white border-0 border-b border-white/10 focus:border-white/30 focus:ring-0 px-0 py-2 transition-colors"
+                            className="w-full bg-transparent text-2xl font-semibold placeholder:text-gray-500 text-white border-none focus:ring-0 focus:outline-none px-0 py-2 transition-colors"
                         />
                     </div>
 
@@ -76,6 +76,7 @@ export default function TaskModal({ isOpen, onClose }: { isOpen: boolean, onClos
                                     <input
                                         name="date"
                                         type="date"
+                                        defaultValue={new Date().toISOString().split('T')[0]}
                                         className="bg-[#27272a] text-sm text-white px-3 py-2 rounded-md border border-white/5 focus:border-primary/50 outline-none"
                                     />
                                 </div>

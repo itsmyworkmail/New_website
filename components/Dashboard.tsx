@@ -61,24 +61,21 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        <div className="flex min-h-screen bg-background text-foreground selection:bg-primary/20">
             {/* Sidebar now controls the view filter */}
             <Sidebar
                 onAddTask={() => setShowTaskModal(true)}
                 currentFilter={filter}
                 setFilter={setFilter}
+                user={user}
             />
 
             <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-                <Header user={user} />
+                <Header user={user} filter={filter} />
 
-                <div className="flex-1 overflow-auto p-4 sm:p-8 relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                    <header className="mb-8">
-                        <h1 className="text-3xl font-bold capitalize">{filter === 'all' ? 'My Tasks' : filter + ' Tasks'}</h1>
-                        <p className="text-muted-foreground mt-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                    </header>
+                <div className="flex-1 overflow-auto p-4 sm:p-6 relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                         {filteredTasks.length > 0 ? (
                             filteredTasks.map(task => (
                                 <TaskCard

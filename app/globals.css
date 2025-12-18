@@ -26,14 +26,14 @@
 
 .dark {
   /* Dark Mode Colors - Matching screenshots */
-  --background: #0F0F12;
+  --background: #1B1B1B;
   /* Very dark mostly black */
   --foreground: #ededed;
 
   --primary: #7B68EE;
   --primary-foreground: #ffffff;
 
-  --card: #1E1E24;
+  --card: #131314;
   --card-foreground: #ededed;
 
   --muted: #27272a;
